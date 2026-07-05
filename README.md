@@ -1,6 +1,4 @@
-Since you are working in WSL, the absolute easiest way to "download" it directly into your project directory—without dealing with browser download chains—is to run a single terminal command.
-
-Copy the entire block below, paste it straight into your WSL terminal inside your project folder, and hit **Enter**. It will instantly create a pristine `README.md` file for you.
+# Linux Device Deriver Devlopment setup in wsl for ARM machines
 
 ```bash
 cat << 'EOF' > README.md
