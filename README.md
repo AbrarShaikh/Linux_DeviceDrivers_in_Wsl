@@ -4,7 +4,10 @@
 cat << 'EOF' > README.md
 # Developing ARM64 Linux Kernel Modules (KLMs) on x86_64 WSL via QEMU
 
-This repository provides an end-to-end guide and workflow template to cross-compile an ARM64 Linux Kernel, construct a lightweight, statically linked BusyBox `initramfs` root filesystem, and develop/test dynamic Kernel Loadable Modules (KLMs)—**entirely on an x86_64 Windows host machine using WSL2 and QEMU system emulation.** No physical ARM64 target hardware is required.
+This repository provides an end-to-end guide and workflow template to cross-compile
+an ARM64 Linux Kernel, construct a lightweight, statically linked BusyBox `initramfs` root filesystem,
+and develop/test dynamic Kernel Loadable Modules (KLMs)—**entirely on an x86_64 Windows host machine using WSL2
+and QEMU system emulation.** No physical ARM64 target hardware is required.
 
 ---
 
