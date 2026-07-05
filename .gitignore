@@ -1,0 +1,28 @@
+# Kernel module build artifacts
+*.o
+*.ko
+*.mod.c
+*.mod.o
+*.mod.o.cmd
+*.o.cmd
+*.Order
+*.order
+*.symvers
+*.d
+*.dtb
+*.tmp*
+*.cmd
+Module.symvers
+modules.order
+
+# Test binaries
+test_pseudo
+test_pseudo_misc
+
+# QEMU and temporary logs
+qemu_run.log
+
+# Editor files
+*.swp
+*~
+.DS_Store
