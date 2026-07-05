@@ -1,4 +1,4 @@
-# Linux Device Deriver Devlopment setup in wsl for ARM machines
+# Linux Device Deriver Development setup in wsl for ARM machines
 
 ```bash
 cat << 'EOF' > README.md
@@ -391,6 +391,3 @@ To safely kill the persistent underlying QEMU emulator instance and return to yo
 * Tap **`Ctrl + A`** concurrently, release them, then immediately press **`X`**.
 EOF
 
-```
-
-```
