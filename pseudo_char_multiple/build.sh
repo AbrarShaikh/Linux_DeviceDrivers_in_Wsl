@@ -14,11 +14,11 @@ if [ ! -d "$KDIR" ]; then
     exit 1
 fi
 
-echo "Building pseudo character driver for ARM64..."
+echo "Building multi-device pseudo character driver for ARM64..."
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- KDIR="$KDIR" -C "$KDIR" M="$PWD" modules
 
 echo "Building user-space test runner for ARM64..."
 aarch64-linux-gnu-gcc -static -o test_pseudo test_pseudo.c
 
-echo "Build complete: pseudo_char.ko and test_pseudo"
-file pseudo_char.ko test_pseudo
+echo "Build complete: pseudo_char_multi.ko and test_pseudo"
+file pseudo_char_multi.ko test_pseudo

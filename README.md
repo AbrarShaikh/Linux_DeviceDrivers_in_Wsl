@@ -1,7 +1,6 @@
 # Linux Device Deriver Development setup in wsl for ARM machines
 
 ```bash
-cat << 'EOF' > README.md
 # Developing ARM64 Linux Kernel Modules (KLMs) on x86_64 WSL via QEMU
 
 This repository provides an end-to-end guide and workflow template to cross-compile

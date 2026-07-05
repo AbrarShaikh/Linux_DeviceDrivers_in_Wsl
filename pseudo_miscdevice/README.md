@@ -4,13 +4,49 @@ This directory contains a Linux kernel loadable module implementing a pseudo cha
 
 ---
 
+An out-of-tree Linux Loadable Kernel Module implementing a simple in-memory
+pseudo character device using the lightweight **miscellaneous device framework**
+(`miscdevice`). The driver backs a `/dev/pseudomisc` node with a fixed **4 KB**
+kernel buffer and supports `read`, `write`, and `llseek`, with all buffer access
+serialized by a mutex.
+
+It is the low-boilerplate counterpart to the
+[`pseudo_character_driver`](../pseudo_character_driver/) (`cdev`) driver — the
+two expose identical read/write/seek behaviour but register very differently.
+See [`cdev_vs_miscdevice_review.md`](../cdev_vs_miscdevice_review.md) for a
+side-by-side comparison.
+
+---
+
+## Features
+
+- Single-call registration via `misc_register` / `misc_deregister`.
+- Automatic `/dev/pseudomisc` node creation — no `class_create` /
+  `device_create` boilerplate.
+- Dynamic minor number (`MISC_DYNAMIC_MINOR`) under the shared misc major (10).
+- 4096-byte shared kernel buffer (`PSEUDO_BUFFER_SIZE`).
+- `read` / `write` / `llseek` (`SEEK_SET`, `SEEK_CUR`, `SEEK_END`).
+- Bounds-checked seeks and offset-based partial writes (`-ENOSPC` at buffer end).
+- Concurrency safety via `mutex_lock_interruptible`.
+
+### Why `miscdevice`?
+
+| | `cdev` | `miscdevice` |
+| --- | --- | --- |
+| Major number | Dynamically allocated | Shared global major `10` |
+| Node creation | Manual `class_create` + `device_create` | Automatic via `misc_register` |
+| Boilerplate | High | Minimal (one struct + one call) |
+| Best for | Multi-instance devices | Single-instance / control interfaces |
+
+---
+
 ## 📂 Directory Contents
 
-* **[pseudo_misc.c](file:///home/mdabr/diy-lkm/pseudo_miscdevice/pseudo_misc.c)**: The kernel driver source code implementing file operations registered under the misc subsystem.
-* **[test_pseudo_misc.c](file:///home/mdabr/diy-lkm/pseudo_miscdevice/test_pseudo_misc.c)**: The user-space test harness verifying dynamic major/minor registration, file operations, and device access under `/dev/pseudomisc`.
-* **[Makefile](file:///home/mdabr/diy-lkm/pseudo_miscdevice/Makefile)**: Kernel build orchestration file.
-* **[init.test](file:///home/mdabr/diy-lkm/pseudo_miscdevice/init.test)**: Reference initial startup script copy showing how to configure QEMU automated test runs.
-* **[qemu_run.log](file:///home/mdabr/diy-lkm/pseudo_miscdevice/qemu_run.log)**: Captured boot execution log showing successful module load and test suite run.
+* **[pseudo_misc.c]**: The kernel driver source code implementing file operations registered under the misc subsystem.
+* **[test_pseudo_misc.c]**: The user-space test harness verifying dynamic major/minor registration, file operations, and device access under `/dev/pseudomisc`.
+* **[Makefile]**: Kernel build orchestration file.
+* **[init.test]**: Reference initial startup script copy showing how to configure QEMU automated test runs.
+* **[qemu_run.log]**: Captured boot execution log showing successful module load and test suite run.
 
 ---
 
@@ -46,17 +82,24 @@ The user-space program [test_pseudo_misc.c](file:///home/mdabr/diy-lkm/pseudo_mi
 
 Because the testing environment runs on an emulated ARM64 guest system, you must cross-compile the targets.
 
-### 1. Compile the Kernel Module (`pseudo_misc.ko`)
-Run the `make` build loop command pointing to the kernel source directory:
+### The Easy Way (Automated Build Script)
+You can compile both the kernel module and the user-space test runner together using the provided build script:
 ```bash
-make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- KDIR="/home/mdabr/linux" -C "/home/mdabr/linux" M="$PWD" modules
+./build.sh
 ```
 
-### 2. Compile the Test Program (`test_pseudo_misc`)
-Statically compile the test executable to avoid shared library linkage issues inside the minimal `initramfs`:
-```bash
-aarch64-linux-gnu-gcc -static -o test_pseudo_misc test_pseudo_misc.c
-```
+### Manual Compilation
+Alternatively, you can compile each component individually:
+
+1. **Compile the Kernel Module (`pseudo_misc.ko`)**:
+   ```bash
+   make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- KDIR="/home/mdabr/linux" -C "/home/mdabr/linux" M="$PWD" modules
+   ```
+
+2. **Compile the Test Program (`test_pseudo_misc`)**:
+   ```bash
+   aarch64-linux-gnu-gcc -static -o test_pseudo_misc test_pseudo_misc.c
+   ```
 
 ---
 

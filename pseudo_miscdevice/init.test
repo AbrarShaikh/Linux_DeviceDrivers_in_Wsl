@@ -10,14 +10,7 @@ echo -e "\n=========================================="
 echo -e "   Successfully Booted QEMU ARM64 Target   "
 echo -e "==========================================\n"
 
-# 3. Load drivers and run tests
-echo "Loading pseudo_char.ko..."
-insmod /pseudo_char.ko
-if [ -f /test_pseudo ]; then
-    chmod +x /test_pseudo
-    /test_pseudo
-fi
-
+# 3. Load the miscdevice driver and run its test
 echo "Loading pseudo_misc.ko..."
 insmod /pseudo_misc.ko
 if [ -f /test_pseudo_misc ]; then
@@ -25,6 +18,6 @@ if [ -f /test_pseudo_misc ]; then
     /test_pseudo_misc
 fi
 
-dmesg | grep -E "pseudodev|pseudomisc"
+dmesg | grep -E "pseudomisc"
 
 poweroff -f
